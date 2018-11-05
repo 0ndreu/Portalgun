@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+	<body>
+
+		<script src="js/TDSLoader.js"></script>                                            <!-- Подключаем библиотеки: загрузка 3дс макс -->
+		<script src="js/three.js"></script>                                                <!-- графика -->
+		<script src="js/TrackballControls.js"></script> 									<!-- вращение камеры-->
+
+		<script>
+			camera = new THREE.PerspectiveCamera(											// создание камеры перспективной проекции
+                60,																			// угол обзора
+				window.innerWidth / window.innerHeight,                                     // отношение сторон, куда будет отображаться
+				0.1,                                                                        // как близко к камере объект может быть
+				100);                                                                       // как далеко от камеры
+			camera.position.set(0, -10, 7);                                                 // выставить камеру
+
+			controls = new THREE.TrackballControls(camera);                                 // создать ВРАЩАЮЩУЮСЯ камеру вокруг сцены
+
+			scene = new THREE.Scene();                                                      // создать сцену
+			scene.add(new THREE.HemisphereLight());                                         // доавить на сцену свет, который прямо над ней
+
+			var directionalLight = new THREE.DirectionalLight(0x222222);                    // создать направленный свет
+			directionalLight.position.set(0, 0, 10);                                        // позиция направленного света
+			scene.add(directionalLight);                                                    // добавить этот свет
+
+			var loader = new THREE.TDSLoader();                                             // создать объект загрузщика из 3дс макс
+			loader.setResoursePath('models/');                                              // задать путь, откуда брать ресурсы
+			loader.load('models/portalgun.3ds.html', function (mdl) {                       // загрузить саму модель
+				mdl.position.set(0, 0, 0);                                                  // указать ее место
+				scene.add(mdl);                                                             // добавить на сцену
+            });
+
+			var renderer = new THREE.WebGLRenderer();                                       // создать объект уравления видеокартой
+			renderer.setPixelRatio(10);                                                     // качество отрисовки сцены
+            renderer.setSize(window.innerWidth, window.innerHeight);                        // размер области трехмерной отрисовки 
+            document.body.appendChild(renderer, domElement);                                // добавить отрисовку с видеокарты на страницу html
+
+            animate();                                                                      // функция перерисовки
+
+			function animate()                                                              
+			{
+				controls.update();                                                          // обновить положение мыши и кнопок на клавиатуре
+				renderer.render(scene, camera);                                             // заставить карту отрисовать сцену с видом камеры
+				requestAnimationFrame(animate);                                             // поместить  вочередь вызовов функцию перерисовки сцены
+			}
+		</script>
+	</body>
+</html>
